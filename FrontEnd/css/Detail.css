@@ -1,0 +1,97 @@
+body {
+    margin: 0;
+}
+
+.header-box {
+    font-size: 20px;
+    background-color: #cccccc4b;
+    width: 100%;
+    padding: 14px;
+    box-sizing: border-box;
+}
+
+/* 중간 MyPage 있는 div */
+.word-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.word {
+    font-size: 18px;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+/* A 태그 밑줄 제거 / 검은색 설정 */
+.word a {
+    text-decoration: none;
+    color: #000;
+}
+
+ul.cloth-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0 20px;
+}
+
+ul.cloth-list > li.list-item {
+    border: 1.5px solid #0000002c;
+    margin: 0px 100px 5px;
+    border-radius: 5px;
+    width: auto;
+    display: flex;
+}
+
+.list-item-content {
+    margin: 0 10px;
+    padding: 2px;
+    box-sizing: border-box;
+    height: auto;
+}
+
+.item-text-content {
+    margin: auto 10px; /* 위아래를 가운데 정렬하기 위해 margin 속성 수정 */
+    padding: 2px;
+    box-sizing: border-box;
+    width: auto;
+    height: auto;
+    font-size: 24px;
+}
+
+/* img 들어있는 div */
+.list-item img {
+    height: auto;
+    margin-bottom: 10px;
+}
+
+/* text 부분 */
+.text-content {
+    margin: 25px 10px;
+    padding: 2px;
+    box-sizing: border-box;
+    width: auto;
+    height: auto;
+}
+
+/* text 부분 */
+.title {
+    margin: 15px 10px 120px;
+    padding: 2px;
+    font-size: 40px;
+    box-sizing: border-box;
+    width: auto;
+    height: auto;
+}
+
+.style-box {
+    border: 1px solid rgba(192, 22, 22, 0.795); /* 테두리 스타일 */
+    border-radius: 10px; /* 둥근 테두리를 위한 값 조절 */
+    padding: 10px; /* 내부 여백 */
+    width: 100px; /* 너비 */
+    text-align: center; /* 텍스트를 가운데 정렬 */
+}
+
+a {
+    text-decoration: none;
+    color: #000;
+}
