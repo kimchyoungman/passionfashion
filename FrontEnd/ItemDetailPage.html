@@ -1,40 +1,110 @@
 <!DOCTYPE html>
-<head>
-    <meta charset="UTF-8" />
-    <title>Fashion DB Project</title>
-    <link rel="stylesheet" href="/css/Detail.css" />
-</head>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Fashion DB Project</title>
+        <link rel="stylesheet" href="/css/Detail.css" />
+    </head>
 
-<body>
-    <!-- 최상단 Fashion DB Project div -->
-    <div class="header-box"><a href="main.html">Fashion DB Project</a></div>
+    <body>
+        <!-- 최상단 Fashion DB Project div -->
+        <div class="header-box"><a href="main.html">Fashion DB Project</a></div>
 
-    <div class="word">아이템 세부 정보</div>
-    <ul class="cloth-list">
-        <li class="list-item">
-            <div class="list-item-content">
-                <img
-                    src="https://image.msscdn.net/images/prd_img/20220720/2673444/detail_2673444_69_500.jpg"
-                />
-            </div>
-            <div class="item-text-content">
-                <div class="style-box">캐주얼</div>
-                <div class="title">
-                    베이더론 KR - 화이트:라이트그레이:검
+        <div class="word">아이템 세부 정보</div>
+        <ul class="cloth-list">
+            <li class="list-item">
+                <div class="list-item-content" style="display: flex; align-items: center; justify-content: center;">
+                    <div id="itemImage"></div>
+
                 </div>
-                <div class="text-content">
-                    https://www.musinsa.com/app/goods/2673444?loc=goods_rank
+                <div class="item-text-content">
+                    <div class="style-box" id="Style">캐주얼</div>
+                    <div class="title" id="Product_name" style="margin-bottom: 10px;">
+                        베이더론 KR - 화이트:라이트그레이:검
+                    </div>
+                    <div class="text-content" id="Product_url">
+                        https://www.musinsa.com/app/goods/2673444?loc=goods_rank
+                    </div>
+                    <div class="text-content" id="Brand">브랜드</div>
+                    <div class="text-content" id="Category">카테고리</div>
+                    <div class="text-content" id="Price">가격</div>
+                    <div class="text-content" id="Review">리뷰수</div>
+                    <div class="text-content" id="Like">좋아요</div>
+                    
+                    
                 </div>
-                <div class="text-content">
-                    브랜드
-                </div>
-                <div class="text-content">
-                    카테고리
-                </div>
-            </div>
-        </li>
-    </ul>
+            </li>
+        </ul>
+    </body>
+
+    <script>
+        window.onload = async () => {
+            try {
+                const currentUrl = window.location.href;
+
+                // URL에서 "id=" 뒤에 있는 부분 찾기
+                const startIndex = currentUrl.indexOf("id=");
+                if (startIndex !== -1) {
+                    const idString = currentUrl.substring(startIndex + 3);
+
+                    // 숫자로 파싱
+                    const itemId = parseInt(idString);
+
+                    // itemId를 사용하여 API 호출 또는 필요한 작업 수행
+                    console.log("Item ID:", itemId);
+
+                    const response = await fetch(
+                        `http://127.0.0.1:8000/api/item/productid/${itemId}`
+                    );
+                    const itemData = await response.json();
+                    console.log(itemData);
+
+                    const itemImageElement = document.getElementById("itemImage");
+                    const itemImageUrl = itemData.Image_url
+                    const imgElement = document.createElement("img");
+                    imgElement.src = itemImageUrl;
+                    imgElement.style.width = "300px";
+                    imgElement.style.height = "auto";
+                    itemImageElement.appendChild(imgElement);
+
+                    const StyleElement = document.getElementById("Style");
+                    const Style = itemData.Style
+                    StyleElement.textContent = `${Style}`;
+
+                    const NameElement = document.getElementById("Product_name");
+                    const Name = itemData.Product_name
+                    NameElement.textContent = `${Name}`;
+
+                    const LinkElement = document.getElementById("Product_url");
+                    const Link = itemData.Product_url
+                    LinkElement.textContent = `${Link}`;
+
+                    const BrandElement = document.getElementById("Brand");
+                    const Brand = itemData.Brand
+                    BrandElement.textContent = `브랜드: ${Brand}`;
+
+                    const CategoryElement = document.getElementById("Category");
+                    const Category = itemData.Category
+                    CategoryElement.textContent = `카테고리: ${Category}`;
+
+                    const PriceElement = document.getElementById("Price");
+                    const Price = itemData.Price
+                    PriceElement.textContent = `가격: ${Price}원`;
+
+                    const ReviewElement = document.getElementById("Review");
+                    const Review = itemData.Review
+                    ReviewElement.textContent = `리뷰 수: ${Review}개`;
+
+                    const LikeElement = document.getElementById("Like");
+                    const Like = itemData.Like
+                    LikeElement.textContent = `좋아요 수: ${Like}개`;
 
 
 
-</body>
+                }
+            } catch (error) {
+                console.error("API 요청 실패:", error);
+            }
+        };
+    </script>
+</html>

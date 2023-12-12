@@ -1,82 +1,111 @@
 <!DOCTYPE html>
-<head>
-    <meta charset="UTF-8" />
-    <title>Fashion DB Project</title>
-    <link rel="stylesheet" href="/css/app.css" />
-</head>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Fashion DB Project</title>
+        <link rel="stylesheet" href="/css/app.css" />
+    </head>
 
-<body>
-    <!-- 최상단 Fashion DB Project div -->
-    <div class="header-box">Fashion DB Project</div>
+    <body>
+        <!-- 최상단 Fashion DB Project div -->
+        <div class="header-box">Fashion DB Project</div>
 
-    <!-- 중간 Item List와 My Page 부분 / 하나의 div에 묶어놓음 -->
-    <div class="word-container">
-        <div class="word">Item List</div>
-        <div class="word"><a href="MyPage.html">My Page</a></div>
-    </div>
+        <!-- 중간 Item List와 My Page 부분 / 하나의 div에 묶어놓음 -->
+        <div class="word-container">
+            <div class="word">Item List</div>
+            <div class="word"><a href="MyPage.html">My Page</a></div>
+        </div>
 
-    <div>
-        <ul class="cloth-list">
-            <li class="list-item">
-                <div class="list-item-content">
-                    <img
-                        src="https://image.msscdn.net/images/prd_img/20220720/2673444/detail_2673444_69_500.jpg"
-                    />
-                </div>
-                <div class="item-text-content">
-                    <div class="style-box">캐주얼</div>
-                    <div class="text-content">
-                        베이더론 KR - 화이트:라이트그레이:검
-                    </div>
-                    <div class="text-content">
-                        https://www.musinsa.com/app/goods/2673444?loc=goods_rank
-                    </div>
-                </div>
-            </li>
-            <li class="list-item">
-                <div class="list-item-content">
-                    <img
-                        src="https://image.msscdn.net/images/prd_img/20220720/2673444/detail_2673444_69_500.jpg"
-                    />
-                </div>
-                <div class="item-text-content">
-                    <div class="style-box">캐주얼</div>
-                    <div class="text-content">
-                        베이더론 KR - 화이트:라이트그레이:검
-                    </div>
-                    <div class="text-content">
-                        https://www.musinsa.com/app/goods/2673444?loc=goods_rank
-                    </div>
-                </div>
-            </li>
-            <li class="list-item">
-                <div class="list-item-content">
-                    <img
-                        src="https://image.msscdn.net/images/prd_img/20220720/2673444/detail_2673444_69_500.jpg"
-                    />
-                </div>
-                <div class="item-text-content">
-                    <div class="style-box">캐주얼</div>
-                    <div class="text-content">
-                        베이더론 KR - 화이트:라이트그레이:검
-                    </div>
-                    <div class="text-content">
-                        https://www.musinsa.com/app/goods/2673444?loc=goods_rank
-                    </div>
-                </div>
-            </li>
-        </ul>
-    </div>
+        <div>
+            <ul class="cloth-list" id="itemList">
+                <!-- 아이템이 자동으로 추가될 위치 -->
+            </ul>
+        </div>
 
-    <div style="text-align: center; margin-top: 5px">
-        <button class="refresh-button" onclick="redirectToUserPage()">
-            옷장 채우기
-        </button>
-    </div>
-</body>
+        <div style="text-align: center; margin-top: 5px">
+            <button class="refresh-button" onclick="redirectToUserPage()">
+                옷장 채우기
+            </button>
+        </div>
 
-<script>
-    function redirectToUserPage() {
-        window.location.href = "UserPage.html";
-    }
-</script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                // 페이지 로드 시 아이템 데이터를 가져와서 표시
+                loadAndDisplayItems();
+            });
+
+            async function loadAndDisplayItems() {
+                try {
+                    // 서버의 API 엔드포인트로 요청을 보냄
+                    const response = await fetch(
+                        "http://127.0.0.1:8000/api/item/random_items"
+                    );
+                    const items = await response.json();
+
+                    // 아이템을 화면에 표시
+                    const itemListElement = document.getElementById("itemList");
+                    itemListElement.innerHTML = ""; // 기존 목록을 비움
+
+                    items.forEach((item) => {
+                        const listItem = document.createElement("li");
+                        listItem.className = "list-item";
+
+                        const listItemContent = document.createElement("div");
+                        listItemContent.className = "list-item-content";
+
+                        const img = document.createElement("img");
+                        img.src = item.Image_url;
+                        img.alt = item.Product_name;
+
+                        listItemContent.appendChild(img);
+
+                        const itemTextContent = document.createElement("div");
+                        itemTextContent.className = "item-text-content";
+
+                        const styleBox = document.createElement("div");
+                        styleBox.className = "style-box";
+                        styleBox.textContent = item.Style;
+
+                        const textContent1 = document.createElement("div");
+                        textContent1.className = "text-content1";
+
+                        const itemDetailLink = document.createElement("a");
+                        itemDetailLink.href = `ItemDetailPage.html?id=${item.Product_id}`; // ?id=${item.Product_id} 형식으로 상품 ID를 넘겨줍니다.
+                        itemDetailLink.textContent = item.Product_name;
+                        itemDetailLink.target = "_blank"; // 새 창에서 열기
+
+                        textContent1.appendChild(itemDetailLink);
+
+                        const textContent2 = document.createElement("div");
+                        textContent2.className = "text-content2";
+                        const link = document.createElement("a");
+                        link.href = item.Product_url;
+                        link.textContent = item.Product_url;
+                        link.target = "_blank"; // 새 창에서 열기 위해
+
+                        textContent2.appendChild(link);
+
+                        itemTextContent.appendChild(styleBox);
+                        itemTextContent.appendChild(textContent1);
+                        itemTextContent.appendChild(textContent2);
+
+                        listItem.appendChild(listItemContent);
+                        listItem.appendChild(itemTextContent);
+
+                        itemListElement.appendChild(listItem);
+                    });
+                } catch (error) {
+                    console.error("Error fetching items:", error);
+                }
+            }
+
+            function redirectToUserPage() {
+                window.location.href = "UserPage.html";
+            }
+
+            textContent1.addEventListener("click", function () {
+                window.location.href = this.href; // this.href는 click된 요소의 href 속성 값입니다.
+            });
+        </script>
+    </body>
+</html>

@@ -1,29 +1,102 @@
 <!DOCTYPE html>
-<head>
-    <meta charset="UTF-8" />
-    <title>Fashion DB Project</title>
-    <link rel="stylesheet" href="/css/app.css" />
-</head>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Fashion DB Project</title>
+        <link rel="stylesheet" href="/css/app.css" />
+    </head>
 
-<body>
-    <div class="header-box"><a href="main.html">Fashion DB Project</a></div>
+    <body>
+        <div class="header-box"><a href="main.html">Fashion DB Project</a></div>
 
-    <div class="word">기존 아이템 목록</div>
-    <ul class="cloth-list">
-        <li class="list-item">
-            <div class="list-item-content">
-                <img
-                    src="https://image.msscdn.net/images/prd_img/20220720/2673444/detail_2673444_69_500.jpg"
-                />
-            </div>
-            <div class="item-text-content">
-                <div class="text-content">
-                    베이더론 KR - 화이트:라이트그레이:검
-                </div>
-                <div class="text-content">
-                    https://www.musinsa.com/app/goods/2673444?loc=goods_rank
-                </div>
-            </div>
-        </li>
-    </ul>
-</body>
+        <div class="word-container">
+            <div class="word">기존 아이템 목록</div>
+            <div class="word" id="userName"></div>
+        </div>
+
+        <ul class="cloth-list" id="itemList"></ul>
+    </body>
+
+    <script>
+        // 페이지 로드 시 API에서 데이터를 가져와서 표시
+        window.onload = async () => {
+            try {
+                const response = await fetch(
+                    "http://127.0.0.1:8000/api/user_profile"
+                );
+                const User_data = await response.json();
+
+                // 여기에서 필요한 데이터를 가져와서 표시
+                const UserName = User_data[0].name;
+
+                // 가져온 이름을 사용하여 HTML에 추가
+                const UserNameElement = document.getElementById("userName");
+                UserNameElement.textContent = `${UserName}`;
+
+                const user_id = parseInt(User_data[0].User_id);
+                const UserItemAPI = await fetch(
+                    `http://127.0.0.1:8000/api/item/user/${user_id}`
+                );
+                const items = await UserItemAPI.json();
+
+                const itemListElement = document.getElementById("itemList");
+                itemListElement.innerHTML = ""; // 기존 목록을 비움
+
+                items.forEach((item) => {
+                    const listItem = document.createElement("li");
+                    listItem.className = "list-item";
+
+                    const listItemContent = document.createElement("div");
+                    listItemContent.className = "list-item-content";
+
+                    const img = document.createElement("img");
+                    img.src = item.Image_url;
+                    img.alt = item.Product_name;
+
+                    listItemContent.appendChild(img);
+
+                    const itemTextContent = document.createElement("div");
+                    itemTextContent.className = "item-text-content";
+
+                    const styleBox = document.createElement("div");
+                    styleBox.className = "style-box";
+                    styleBox.textContent = item.Style;
+
+                    const textContent1 = document.createElement("div");
+                    textContent1.className = "text-content1";
+
+                    const itemDetailLink = document.createElement("a");
+                    itemDetailLink.href = `ItemDetailPage.html?id=${item.Product_id}`; // ?id=${item.Product_id} 형식으로 상품 ID를 넘겨줍니다.
+                    itemDetailLink.textContent = item.Product_name;
+                    itemDetailLink.target = "_blank"; // 새 창에서 열기
+
+                    textContent1.appendChild(itemDetailLink);
+
+                    const textContent2 = document.createElement("div");
+                    textContent2.className = "text-content2";
+                    const link = document.createElement("a");
+                    link.href = item.Product_url;
+                    link.textContent = item.Product_url;
+                    link.target = "_blank"; // 새 창에서 열기 위해
+
+                    textContent2.appendChild(link);
+
+                    itemTextContent.appendChild(styleBox);
+                    itemTextContent.appendChild(textContent1);
+                    itemTextContent.appendChild(textContent2);
+
+                    listItem.appendChild(listItemContent);
+                    listItem.appendChild(itemTextContent);
+
+                    itemListElement.appendChild(listItem);
+                });
+            } catch (error) {
+                console.error("API 요청 실패:", error);
+            }
+        };
+
+        textContent1.addEventListener("click", function () {
+            window.location.href = this.href; // this.href는 click된 요소의 href 속성 값입니다.
+        });
+    </script>
+</html>

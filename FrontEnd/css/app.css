@@ -107,3 +107,7 @@ a {
     margin: 8px 0;
     font-size: 12px;
 }
+
+#itemImage {
+    width: 150px;
+}

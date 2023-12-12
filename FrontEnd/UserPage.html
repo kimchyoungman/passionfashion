@@ -8,39 +8,34 @@
 <body>
     <div class="header-box"><a href="main.html">Fashion DB Project</a></div>
 
-    <div class="word">기존 아이템 목록</div>
-    <ul class="cloth-list">
-        <li class="list-item">
-            <div class="list-item-content">
-                <img
-                    src="https://image.msscdn.net/images/prd_img/20220720/2673444/detail_2673444_69_500.jpg"
-                />
-            </div>
-            <div class="item-text-content">
-                <div class="text-content">
-                    베이더론 KR - 화이트:라이트그레이:검
-                </div>
-                <div class="text-content">
-                    https://www.musinsa.com/app/goods/2673444?loc=goods_rank
-                </div>
-            </div>
-        </li>
-    </ul>
+    <div class="word-container">
+        <div class="word">기존 아이템 목록</div>
+        <div class="word" id="userName"></div>
+    </div>
+    <ul class="cloth-list" id="existingItemList"></ul>
     <div class="word">새로 구매한 아이템</div>
     <ul class="cloth-list">
         <li class="list-item">
-            <div class="list-item-content">
-                <img
-                    src="https://image.msscdn.net/images/prd_img/20220720/2673444/detail_2673444_69_500.jpg"
-                />
-            </div>
             <div class="item-text-content">
-                <div class="text-content">
-                    베이더론 KR - 화이트:라이트그레이:검
-                </div>
-                <div class="text-content">
-                    https://www.musinsa.com/app/goods/2673444?loc=goods_rank
-                </div>
+                <input type="text" id="ImageUrlInput" placeholder="Image URL" />
+                <input
+                    type="text"
+                    id="productIdInput"
+                    placeholder="Product ID"
+                />
+                <input
+                    type="text"
+                    id="productNameInput"
+                    placeholder="Product Name"
+                />
+                <input
+                    type="text"
+                    id="productUrlInput"
+                    placeholder="Product URL"
+                />
+                <input type="text" id="BrandInput" placeholder="Brand" />
+                <input type="text" id="StyleInput" placeholder="Style" />
+                <button onclick="createItem()">Create Item</button>
             </div>
         </li>
     </ul>
@@ -53,7 +48,147 @@
 </body>
 
 <script>
+    window.onload = async () => {
+        try {
+            const response = await fetch(
+                "http://127.0.0.1:8000/api/user_profile"
+            );
+            const User_data = await response.json();
+
+            // 여기에서 필요한 데이터를 가져와서 표시
+            const UserName = User_data[0].name;
+
+            // 가져온 이름을 사용하여 HTML에 추가
+            const UserNameElement = document.getElementById("userName");
+            UserNameElement.textContent = `${UserName}`;
+
+            const user_id = parseInt(User_data[0].User_id);
+            const UserItemAPI = await fetch(
+                `http://127.0.0.1:8000/api/item/user/${user_id}`
+            );
+            const items = await UserItemAPI.json();
+
+            const existingItemListElement =
+                document.getElementById("existingItemList");
+            existingItemListElement.innerHTML = ""; // 기존 목록을 비움
+
+            items.forEach((item) => {
+                const listItem = document.createElement("li");
+                listItem.className = "list-item";
+
+                const listItemContent = document.createElement("div");
+                listItemContent.className = "list-item-content";
+
+                const img = document.createElement("img");
+                img.src = item.Image_url;
+                img.alt = item.Product_name;
+
+                listItemContent.appendChild(img);
+
+                const itemTextContent = document.createElement("div");
+                itemTextContent.className = "item-text-content";
+
+                const styleBox = document.createElement("div");
+                styleBox.className = "style-box";
+                styleBox.textContent = item.Style;
+
+                const textContent1 = document.createElement("div");
+                textContent1.className = "text-content1";
+
+                const itemDetailLink = document.createElement("a");
+                itemDetailLink.href = `ItemDetailPage.html?id=${item.Product_id}`; // ?id=${item.Product_id} 형식으로 상품 ID를 넘겨줍니다.
+                itemDetailLink.textContent = item.Product_name;
+                itemDetailLink.target = "_blank"; // 새 창에서 열기
+
+                textContent1.appendChild(itemDetailLink);
+
+                const textContent2 = document.createElement("div");
+                textContent2.className = "text-content2";
+                const link = document.createElement("a");
+                link.href = item.Product_url;
+                link.textContent = item.Product_url;
+                link.target = "_blank"; // 새 창에서 열기 위해
+
+                textContent2.appendChild(link);
+
+                itemTextContent.appendChild(styleBox);
+                itemTextContent.appendChild(textContent1);
+                itemTextContent.appendChild(textContent2);
+
+                listItem.appendChild(listItemContent);
+                listItem.appendChild(itemTextContent);
+
+                existingItemListElement.appendChild(listItem);
+            });
+
+            window.createItem = async () => {
+                const imageUrlInput = document.getElementById("ImageUrlInput");
+                const productNameInput =
+                    document.getElementById("productNameInput");
+                const productUrlInput =
+                    document.getElementById("productUrlInput");
+                const brandInput = document.getElementById("BrandInput");
+                const styleInput = document.getElementById("StyleInput");
+                const productIdInput =
+                    document.getElementById("productIdInput");
+
+                const productId = productIdInput.value;
+                const imageUrl = imageUrlInput.value;
+                const productName = productNameInput.value;
+                const productUrl = productUrlInput.value;
+                const brand = brandInput.value;
+                const style = styleInput.value;
+
+                if (
+                    !imageUrl ||
+                    !productName ||
+                    !productUrl ||
+                    !brand ||
+                    !style ||
+                    !productId
+                ) {
+                    alert("Please fill in all fields.");
+                    return;
+                }
+
+                // 서버로 입력값 전송
+                const createItemResponse = await fetch(
+                    "http://127.0.0.1:8000/api/item",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            Product_id: productId,
+                            Image_url: imageUrl,
+                            Product_name: productName,
+                            Product_url: productUrl,
+                            Brand: brand,
+                            Style: style,
+                        }),
+                    }
+                );
+
+                if (!createItemResponse.ok) {
+                    console.error(
+                        "Error creating item:",
+                        createItemResponse.statusText
+                    );
+                } else {
+                    alert("Item created successfully!");
+                }
+            };
+        } catch (error) {
+            console.error("API 요청 실패:", error);
+        }
+    };
+
     function redirectToRecommendPage() {
         window.location.href = "RecommendPage.html";
     }
+
+    textContent1.addEventListener("click", function () {
+        window.location.href = this.href; // this.href는 click된 요소의 href 속성 값입니다.
+    });
 </script>

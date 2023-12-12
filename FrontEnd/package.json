@@ -1,0 +1,15 @@
+{
+    "name": "kmj_db_project",
+    "version": "1.0.0",
+    "description": "",
+    "main": "main.html",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "dev": "live-server src"
+    },
+    "keywords": [],
+    "author": "",
+    "devDependencies": {
+        "live-server": "^1.2.2"
+    }
+}
