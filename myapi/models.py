@@ -1,49 +1,45 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import relationship
+
 from database import Base
 
+class User_Profile(Base):
+    __tablename__ = "User_Profile"
+    User_id = Column(Integer, primary_key=True)
+    name = Column(String(100))
+    sex = Column(String(100))
+    age = Column(Integer)
 
-class User_Color(Base):
-    __tablename__ = "User_Color"
+    user_item = relationship("User_Item", back_populates="user_profile")
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    User_id = Column(String(100), nullable=False)
-    Product_id = Column(String(100), nullable=False)
-    Black = Column(Integer)
-    Blue = Column(Integer)
-    Red = Column(Integer)
-    Green = Column(Integer)
-    Yellow = Column(Integer)
-    White = Column(Integer)
+class User_Item(Base):
+    __tablename__ = "User_Item"
 
+    id = Column(Integer, primary_key=True)
+    User_id = Column(Integer, ForeignKey("User_Profile.User_id"))
+    Product_id = Column(Integer, ForeignKey("Item.Product_id"))
 
-class User_Style(Base):
-    __tablename__ = "User_Style"
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    User_id = Column(String(100), nullable=False)
-    Product_id = Column(String(100), nullable=False)
-    Casual = Column(Integer)
-    Minimal = Column(Integer)
-    Street = Column(Integer)
-    Business = Column(Integer)
-
+    user_profile = relationship("User_Profile", back_populates="user_item")
+    item = relationship("Item", back_populates="user_items")
 
 class Item(Base):
     __tablename__ = "Item"
-
-    Product_id = Column(String(100), primary_key=True)
+    Product_id = Column(Integer, primary_key=True)
     Product_name = Column(String(100), nullable=False)
-    Sub_categoary = Column(String(100), nullable=False)
-    Link = Column(String(100), nullable=False)
-    Image_link = Column(String(100), nullable=False)
+    Product_url = Column(String(100), nullable=False)
+    Image_url = Column(String(100), nullable=False)
+    Brand = Column(String(100), nullable=False)
     Style = Column(String(100), nullable=False)
-    Color = Column(String(100), nullable=False)
-    Like = Column(String(100), nullable=False)
 
+    detailed_item = relationship('Detailed_Item', back_populates='item', uselist=False)
+    user_items = relationship("User_Item", back_populates="item")
 
-class Purchase(Base):
-    __tablename__ = "Purchase"
+class Detailed_Item(Base):
+    __tablename__ = "Detailed_Item"
+    Product_id = Column(Integer, ForeignKey("Item.Product_id"), primary_key=True, unique=True)
+    Price = Column(Integer, nullable=False)
+    Review = Column(Integer, nullable=False)
+    Like = Column(Integer, nullable=False)
+    Category = Column(String(100), nullable=False)
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    Product_id = Column(String(100), nullable=False)
-    User_id = Column(String(100), nullable=False)
+    item = relationship("Item", back_populates="detailed_item")
